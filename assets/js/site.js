@@ -232,10 +232,8 @@
       out.classList.add("show");
     };
 
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      if (!check()) return;
-      var text = buildText();
+    // Fallback while no Web3Forms key is set: hand the text to the visitor's mail program
+    var openMail = function (text) {
       showOut(text);
       status.className = "form-status";
       status.textContent = I.t("form.opened");
@@ -244,6 +242,51 @@
         "&body=" + encodeURIComponent(text);
       if (href.length < 1900) location.href = href;
       else status.textContent = I.t("form.toolong");
+    };
+
+    var sendBtn = $('button[type="submit"]', form);
+    var sending = false;
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (sending || !check()) return;
+      var text = buildText();
+      var key = val("access_key");
+      if (!key || key.indexOf("YOUR_") === 0) return openMail(text);
+
+      sending = true;
+      sendBtn.disabled = true;
+      out.classList.remove("show");
+      status.className = "form-status";
+      status.textContent = I.t("form.sending");
+      var payload = {
+        access_key: key,
+        subject: I.t("mail.subject", { company: val("company") }),
+        from_name: val("name") + " (" + val("company") + ")",
+        email: val("email"), // Web3Forms uses this as the Reply-To address
+        message: text
+      };
+      // Honeypot: only bots tick the hidden box. Send the field only when ticked, as a normal form post would.
+      if (form.elements.botcheck.checked) payload.botcheck = true;
+      fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(payload)
+      }).then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          if (!r.ok || !j.success) throw new Error(j.message || r.status);
+        });
+      }).then(function () {
+        form.reset();
+        status.className = "form-status success";
+        status.textContent = I.t("form.sent");
+      }, function () {
+        showOut(text);
+        status.className = "form-status error";
+        status.textContent = I.t("form.failed");
+      }).then(function () {
+        sending = false;
+        sendBtn.disabled = false;
+      });
     });
 
     $("#copy").addEventListener("click", function () {

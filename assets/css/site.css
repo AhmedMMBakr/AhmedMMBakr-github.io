@@ -378,6 +378,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px
 .checks label:has(input:checked) { border-color: var(--brine); background: var(--sage); }
 .form-status { font-size: .95rem; min-height: 1.5em; }
 .form-status.error { color: #9B2C1C; font-weight: 600; }
+.form-status.success { color: var(--brine); font-weight: 600; }
 .out { display: none; }
 .out.show { display: grid; gap: 10px; }
 .out textarea { min-height: 200px; background: var(--sage); font-size: .95rem; }

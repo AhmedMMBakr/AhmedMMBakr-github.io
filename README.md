@@ -9,7 +9,7 @@ Static website for Infinity Import Export, served by GitHub Pages. Plain HTML, C
 | `index.html` | Home: pack shelf, the two ranges, buyers, order steps |
 | `products.html` | Product catalogue with filters and a quick view |
 | `about.html` | How we work, checks, documents, private label |
-| `contact.html` | Inquiry form (writes an email, sends nothing itself) |
+| `contact.html` | Inquiry form (sends the inquiry by email through Web3Forms) |
 | `impressum.html` | Legal notice. **Fill in the yellow fields before going live.** |
 | `datenschutz.html` | Privacy policy. **Fill in the yellow fields before going live.** |
 
@@ -21,6 +21,7 @@ Header and footer are repeated in every page. If you change a menu link, change 
 - **Photos:** the site uses the resized copies in `assets/img/products/`. The originals in `assets/img/iqf-frozen/` are not used by any page.
 - **German text:** `assets/js/i18n.js` → `DICT.de`. English text is written directly in the HTML; each translated element has `data-i18n="key"` and the matching German string uses the same key.
 - **Email address:** search all files for `info@infinity-import-export.de`.
+- **Inquiry form:** the form posts to [Web3Forms](https://web3forms.com), which emails each inquiry to the address the access key was created for. The key is the hidden `access_key` field near the top of the form in `contact.html` (Web3Forms keys are meant to be public). While it still says `YOUR_WEB3FORMS_ACCESS_KEY`, the form falls back to opening the visitor's own email program. To send inquiries to a different address, create a new key for that address at web3forms.com.
 - **Phone:** `+49 157 58266399` appears in `contact.html` and `impressum.html`.
 - **After changing CSS or JS:** raise the `?v=2` number on the `site.css` / `.js` links in all six HTML files (e.g. to `?v=3`), so phones load the new files instead of a cached copy.
 - **Colours and fonts:** variables at the top of `assets/css/site.css` (brand greens, olive for the preserved range, frost blue for IQF).
