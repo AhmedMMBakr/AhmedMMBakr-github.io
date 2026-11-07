@@ -22,6 +22,7 @@ Header and footer are repeated in every page. If you change a menu link, change 
 - **German text:** `assets/js/i18n.js` → `DICT.de`. English text is written directly in the HTML; each translated element has `data-i18n="key"` and the matching German string uses the same key.
 - **Email address:** search all files for `info@infinity-import-export.de`.
 - **Phone:** `+49 157 58266399` appears in `contact.html` and `impressum.html`.
+- **After changing CSS or JS:** raise the `?v=2` number on the `site.css` / `.js` links in all six HTML files (e.g. to `?v=3`), so phones load the new files instead of a cached copy.
 - **Colours and fonts:** variables at the top of `assets/css/site.css` (brand greens, olive for the preserved range, frost blue for IQF).
 - **Pack drawings:** `assets/img/packs.svg` (one `<symbol>` per pack). Don't put two hyphens in a row inside an XML comment in that file, or no drawing will render.
 

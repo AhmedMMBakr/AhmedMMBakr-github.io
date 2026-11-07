@@ -193,8 +193,7 @@ h4 { font-size: 1.15rem; font-stretch: 85%; line-height: 1.15; }
 .range h3 { font-size: clamp(1.7rem, 2.6vw, 2.3rem); }
 .range-dates { background: var(--date-tint); border-top: 10px solid var(--date); }
 .range-photos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: auto; padding-top: 12px; list-style: none; }
-.range-photos li { position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 2px; }
-.range-photos img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.range-photos img { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 2px; }
 .range .more { font-weight: 650; }
 .range-list { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 8px; }
 .range-list li { font-size: .92rem; padding: 2px 9px; border-radius: 2px; background: rgba(255,255,255,.7); }
@@ -287,9 +286,10 @@ h4 { font-size: 1.15rem; font-stretch: 85%; line-height: 1.15; }
 .product[data-range="dates"] .product-art { background: var(--date-tint); border-bottom-color: var(--date); }
 .product[data-range="iqf"] .product-art svg { --pk-band: var(--frost); }
 .product-art svg { height: calc(var(--h) * .82); width: auto; aspect-ratio: var(--ar); }
-/* photos: pinned to all four edges so small and large images fill the frame alike (Safari ignores % sizes on flex items here) */
-.product-art.has-img { display: block; position: relative; padding: 0; height: 190px; overflow: hidden; }
-.product-art.has-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* photos: plain block in a fixed-height block frame, no flex and no absolute positioning,
+   so every browser (incl. iOS Safari) sizes small and large images the same way */
+.product-art.has-img { display: block; width: 100%; padding: 0; height: 190px; }
+.product-art.has-img img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .product-body { padding: 14px 16px 18px; display: grid; gap: 6px; }
 .product-name { font-weight: 750; font-stretch: 82%; font-size: 1.2rem; line-height: 1.12; }
 .product-meta { font-size: .9rem; color: var(--muted); }
@@ -313,8 +313,8 @@ dialog.quick::backdrop { background: rgba(16, 48, 27, .6); }
 .quick[data-range="iqf"] .quick-art { background: var(--frost-tint); border-bottom-color: #9EC3CD; }
 .quick[data-range="dates"] .quick-art { background: var(--date-tint); border-bottom-color: var(--date); }
 .quick[data-range="iqf"] .quick-art svg { --pk-band: var(--frost); }
-.quick-art.has-img { display: block; position: relative; padding: 0; min-height: 0; height: clamp(200px, 40vh, 340px); overflow: hidden; }
-.quick-art.has-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.quick-art.has-img { display: block; padding: 0; min-height: 0; height: clamp(200px, 40vh, 340px); }
+.quick-art.has-img img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .quick-art svg { height: calc(var(--h) * 1.05); width: auto; aspect-ratio: var(--ar); }
 .quick-body { padding: 24px clamp(20px, 4vw, 36px) 32px; display: grid; gap: 18px; }
 .quick-body h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); }

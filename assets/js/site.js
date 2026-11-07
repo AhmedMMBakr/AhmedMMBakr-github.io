@@ -66,7 +66,7 @@
       grid.innerHTML = list.map(function (p) {
         var d = p[lang];
         var art = p.img
-          ? '<img src="' + esc(p.img) + '" alt="" loading="lazy">'
+          ? '<img src="' + esc(p.img) + '" alt="" width="600" height="600">'
           : p.packs.slice(0, 3).map(packSvg).join("");
         var packNames = p.packs.map(function (id) { return PACKS[id][lang]; }).join(", ");
         return '<li><button type="button" class="product" data-id="' + p.id + '" data-range="' + p.range + '" aria-haspopup="dialog">' +
