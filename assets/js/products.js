@@ -6,7 +6,7 @@
 
   PRODUCTS: one entry per product.
     id      unique, lowercase, no spaces (used in links: contact.html?p=<id>)
-    range   "preserved" or "iqf"
+    range   "preserved", "iqf" or "dates"
     type    "artichokes" | "peppers" | "olives" | "vegetables" | "fruit"
     packs   list of pack ids from PACKS
     img     optional photo path, e.g. "assets/img/products/artichoke-hearts.jpg"
@@ -21,40 +21,40 @@ window.PACKS = {
   "tin":    { h: 124, ar: "104 / 124", en: "Tin 3 kg (A10)",          de: "Dose 3 kg (A10)" },
   "pail":   { h: 140, ar: "124 / 140", en: "Pail 5–10 kg",            de: "Eimer 5–10 kg" },
   "carton": { h: 112, ar: "160 / 112", en: "IQF carton 10 kg",        de: "TK-Karton 10 kg" },
-  "drum":   { h: 160, ar: "110 / 160", en: "Bulk drum 120–220 kg",    de: "Fass 120–220 kg" }
+  "drum":   { h: 160, ar: "110 / 160", en: "Bulk drum 120–220 kg",    de: "Fass 120–220 kg" },
+  "box":    { en: "Retail box 250 g–1 kg",  de: "Schachtel 250 g–1 kg" },
+  "date-carton": { en: "Carton 5 kg",       de: "Karton 5 kg" }
 };
 
 window.PRODUCTS = [
-  /* Preserved in oil */
-  { id: "eggplant-oil", range: "preserved", type: "vegetables", packs: ["jar-s", "jar-l", "tin"],
-    en: { name: "Grilled eggplant slices in oil", cut: "Slices, grilled", medium: "Sunflower oil with garlic and herbs", shelf: "24 months, unopened" },
-    de: { name: "Gegrillte Auberginenscheiben in Öl", cut: "Scheiben, gegrillt", medium: "Sonnenblumenöl mit Knoblauch und Kräutern", shelf: "24 Monate, ungeöffnet" } },
-  { id: "zucchini-oil", range: "preserved", type: "vegetables", packs: ["jar-l", "tin"],
-    en: { name: "Grilled zucchini in oil", cut: "Slices, grilled", medium: "Sunflower oil with herbs", shelf: "24 months, unopened" },
-    de: { name: "Gegrillte Zucchini in Öl", cut: "Scheiben, gegrillt", medium: "Sonnenblumenöl mit Kräutern", shelf: "24 Monate, ungeöffnet" } },
-  { id: "sundried-tomatoes", range: "preserved", type: "vegetables", packs: ["jar-s", "tin", "pail"],
-    en: { name: "Sun-dried tomatoes in oil", cut: "Halves or julienne strips", medium: "Sunflower oil with herbs", shelf: "24 months, unopened" },
-    de: { name: "Getrocknete Tomaten in Öl", cut: "Hälften oder Streifen", medium: "Sonnenblumenöl mit Kräutern", shelf: "24 Monate, ungeöffnet" } },
-  { id: "red-pepper-strips", range: "preserved", type: "peppers", packs: ["jar-l", "tin"],
-    en: { name: "Roasted red pepper strips", cut: "Strips, flame-roasted, peeled", medium: "Light brine or oil", shelf: "24 months, unopened" },
-    de: { name: "Geröstete rote Paprikastreifen", cut: "Streifen, geröstet, geschält", medium: "Leichte Lake oder Öl", shelf: "24 Monate, ungeöffnet" } },
-
-  /* Preserved in brine */
-  { id: "jalapeno-brine", range: "preserved", type: "peppers", packs: ["jar-s", "tin", "pouch", "drum"],
+  /* Preserved — photos in assets/img/products/ */
+  { id: "green-olives", range: "preserved", type: "olives", packs: ["jar-s", "jar-l", "tin", "pouch", "drum"], img: "assets/img/products/green-olives.jpg",
+    en: { name: "Green olives, whole", cut: "Whole, with stone; sized per count/kg", medium: "Brine", shelf: "24 months (jar, tin), 12 months (drum)" },
+    de: { name: "Grüne Oliven, ganz", cut: "Ganz, mit Stein; nach Stück/kg sortiert", medium: "Lake", shelf: "24 Monate (Glas, Dose), 12 Monate (Fass)" } },
+  { id: "grilled-olives", range: "preserved", type: "olives", packs: ["jar-s", "jar-l", "tin", "pail"], img: "assets/img/products/grilled-olives.jpg",
+    en: { name: "Grilled green olives in oil", cut: "Whole, grilled", medium: "Sunflower oil with herbs", shelf: "24 months, unopened" },
+    de: { name: "Gegrillte grüne Oliven in Öl", cut: "Ganz, gegrillt", medium: "Sonnenblumenöl mit Kräutern", shelf: "24 Monate, ungeöffnet" } },
+  { id: "stuffed-olives", range: "preserved", type: "olives", packs: ["jar-s", "jar-l", "tin"], img: "assets/img/products/stuffed-olives.jpg",
+    en: { name: "Stuffed green olives", cut: "Pitted, stuffed with red pepper", medium: "Brine", shelf: "24 months, unopened" },
+    de: { name: "Gefüllte grüne Oliven", cut: "Entsteint, mit roter Paprika gefüllt", medium: "Lake", shelf: "24 Monate, ungeöffnet" } },
+  { id: "sliced-green-olives", range: "preserved", type: "olives", packs: ["jar-s", "tin", "pouch", "drum"], img: "assets/img/products/sliced-green-olives.jpg",
+    en: { name: "Sliced green olives", cut: "Slices, for pizza, salads and sandwiches", medium: "Brine", shelf: "24 months (jar, tin), 12 months (drum)" },
+    de: { name: "Grüne Olivenscheiben", cut: "Scheiben, für Pizza, Salate und Sandwiches", medium: "Lake", shelf: "24 Monate (Glas, Dose), 12 Monate (Fass)" } },
+  { id: "black-olives", range: "preserved", type: "olives", packs: ["jar-s", "tin", "pouch"], img: "assets/img/products/black-olives.jpg",
+    en: { name: "Black olives, pitted", cut: "Whole, pitted", medium: "Light brine", shelf: "24 months, unopened" },
+    de: { name: "Schwarze Oliven, entsteint", cut: "Ganz, entsteint", medium: "Leichte Lake", shelf: "24 Monate, ungeöffnet" } },
+  { id: "pickled-cucumbers", range: "preserved", type: "vegetables", packs: ["jar-s", "jar-l", "tin", "pail", "drum"], img: "assets/img/products/pickled-cucumbers.jpg",
+    en: { name: "Pickled cucumbers", cut: "Whole or sliced; sized per count/jar", medium: "Brine with vinegar", shelf: "24 months (jar, tin), 12 months (drum)" },
+    de: { name: "Essiggurken", cut: "Ganz oder in Scheiben; nach Stück/Glas sortiert", medium: "Lake mit Essig", shelf: "24 Monate (Glas, Dose), 12 Monate (Fass)" } },
+  { id: "jalapeno-brine", range: "preserved", type: "peppers", packs: ["jar-s", "tin", "pouch", "drum"], img: "assets/img/products/jalapeno-brine.jpg",
     en: { name: "Green jalapeño slices in brine", cut: "Slices, 3–5 mm", medium: "Brine with vinegar", shelf: "24 months (jar, tin), 12 months (drum)" },
     de: { name: "Grüne Jalapeño-Scheiben in Lake", cut: "Scheiben, 3–5 mm", medium: "Lake mit Essig", shelf: "24 Monate (Glas, Dose), 12 Monate (Fass)" } },
-  { id: "pepperoncini", range: "preserved", type: "peppers", packs: ["jar-l", "pouch", "drum"],
-    en: { name: "Pepperoncini (Lombardi peppers) in brine", cut: "Whole or sliced", medium: "Brine with vinegar", shelf: "24 months (jar), 12 months (drum)" },
-    de: { name: "Pfefferoni (Lombardi-Paprika) in Lake", cut: "Ganz oder in Scheiben", medium: "Lake mit Essig", shelf: "24 Monate (Glas), 12 Monate (Fass)" } },
-  { id: "green-olives", range: "preserved", type: "olives", packs: ["jar-s", "tin", "pouch", "drum"],
-    en: { name: "Green olives, whole, pitted or sliced", cut: "Whole, pitted or sliced; sized per count/kg", medium: "Brine", shelf: "24 months (jar, tin), 12 months (drum)" },
-    de: { name: "Grüne Oliven, ganz, entsteint oder in Scheiben", cut: "Ganz, entsteint oder in Scheiben; nach Stück/kg sortiert", medium: "Lake", shelf: "24 Monate (Glas, Dose), 12 Monate (Fass)" } },
-  { id: "black-olives", range: "preserved", type: "olives", packs: ["tin", "pouch"],
-    en: { name: "Black olives (ripe), sliced or pitted", cut: "Sliced or pitted", medium: "Light brine", shelf: "36 months (tin), 24 months (pouch)" },
-    de: { name: "Schwarze Oliven, in Scheiben oder entsteint", cut: "In Scheiben oder entsteint", medium: "Leichte Lake", shelf: "36 Monate (Dose), 24 Monate (Beutel)" } },
-  { id: "pickled-mix", range: "preserved", type: "vegetables", packs: ["jar-l", "pail", "drum"],
-    en: { name: "Mixed pickled vegetables", cut: "Carrot, cauliflower, cucumber, pepper", medium: "Brine with vinegar", shelf: "24 months (jar), 12 months (drum)" },
-    de: { name: "Gemischtes Essiggemüse", cut: "Karotte, Blumenkohl, Gurke, Paprika", medium: "Lake mit Essig", shelf: "24 Monate (Glas), 12 Monate (Fass)" } },
+  { id: "pepperoncini", range: "preserved", type: "peppers", packs: ["jar-l", "pouch", "drum"], img: "assets/img/products/pepperoncini.jpg",
+    en: { name: "Pepperoncini in brine", cut: "Whole or sliced", medium: "Brine with vinegar", shelf: "24 months (jar), 12 months (drum)" },
+    de: { name: "Pfefferoni in Lake", cut: "Ganz oder in Scheiben", medium: "Lake mit Essig", shelf: "24 Monate (Glas), 12 Monate (Fass)" } },
+  { id: "pickled-lemons", range: "preserved", type: "fruit", packs: ["jar-l", "tin", "pail", "drum"], img: "assets/img/products/pickled-lemons.jpg",
+    en: { name: "Pickled lemons", cut: "Whole or quartered", medium: "Salt brine", shelf: "24 months (jar, tin), 12 months (drum)" },
+    de: { name: "Eingelegte Zitronen", cut: "Ganz oder geviertelt", medium: "Salzlake", shelf: "24 Monate (Glas, Dose), 12 Monate (Fass)" } },
 
   /* IQF frozen — photos in assets/img/products/ */
   { id: "iqf-artichokes", range: "iqf", type: "artichokes", packs: ["carton"], img: "assets/img/products/iqf-artichokes.jpg",
@@ -104,5 +104,19 @@ window.PRODUCTS = [
     de: { name: "TK Aprikosen (IQF)", cut: "Hälften, entsteint", medium: "Einzeln schockgefroren", shelf: "24 Monate bei −18 °C" } },
   { id: "iqf-lemons", range: "iqf", type: "fruit", packs: ["carton"], img: "assets/img/products/iqf-lemons.jpg",
     en: { name: "IQF lemons", cut: "Whole, slices or wedges", medium: "Individually quick frozen", shelf: "24 months at −18 °C" },
-    de: { name: "TK Zitronen (IQF)", cut: "Ganz, Scheiben oder Spalten", medium: "Einzeln schockgefroren", shelf: "24 Monate bei −18 °C" } }
+    de: { name: "TK Zitronen (IQF)", cut: "Ganz, Scheiben oder Spalten", medium: "Einzeln schockgefroren", shelf: "24 Monate bei −18 °C" } },
+
+  /* Dates */
+  { id: "medjool-dates", range: "dates", type: "fruit", packs: ["box", "date-carton"], img: "assets/img/products/medjool-dates.jpg",
+    en: { name: "Medjool dates", cut: "Whole, with pit; sized per count/kg", medium: "Natural, no added sugar", shelf: "12 months, cool and dry" },
+    de: { name: "Medjool-Datteln", cut: "Ganz, mit Kern; nach Stück/kg sortiert", medium: "Naturbelassen, ohne Zuckerzusatz", shelf: "12 Monate, kühl und trocken" } },
+  { id: "madinah-dates", range: "dates", type: "fruit", packs: ["box", "date-carton"], img: "assets/img/products/madinah-dates.jpg",
+    en: { name: "Madinah dates", cut: "Whole, with pit", medium: "Natural, no added sugar", shelf: "12 months, cool and dry" },
+    de: { name: "Medina-Datteln", cut: "Ganz, mit Kern", medium: "Naturbelassen, ohne Zuckerzusatz", shelf: "12 Monate, kühl und trocken" } },
+  { id: "barhi-dates", range: "dates", type: "fruit", packs: ["box", "date-carton"], img: "assets/img/products/barhi-dates.jpg",
+    en: { name: "Barhi dates", cut: "Fresh yellow dates, on the strand or loose", medium: "Fresh, kept chilled", shelf: "Seasonal; 2–3 weeks at 0–2 °C" },
+    de: { name: "Barhi-Datteln", cut: "Frische gelbe Datteln, an der Rispe oder lose", medium: "Frisch, gekühlt", shelf: "Saisonal; 2–3 Wochen bei 0–2 °C" } },
+  { id: "qassim-dates", range: "dates", type: "fruit", packs: ["box", "date-carton"], img: "assets/img/products/qassim-dates.jpg",
+    en: { name: "Qassim dates", cut: "Whole, with pit", medium: "Natural, no added sugar", shelf: "12 months, cool and dry" },
+    de: { name: "Qassim-Datteln", cut: "Ganz, mit Kern", medium: "Naturbelassen, ohne Zuckerzusatz", shelf: "12 Monate, kühl und trocken" } }
 ];

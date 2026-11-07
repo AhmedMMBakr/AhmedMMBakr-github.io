@@ -30,6 +30,9 @@
   --olive: #A3B04F;
   --olive-tint: #EEF2DF;
   --olive-ink: #4F5A18;
+  --date: #9A6A3A;       /* dates range */
+  --date-tint: #F5EEE6;
+  --date-ink: #6A4521;
   --pk-band: #A6CF84;    /* label colour on the pack drawings */
   --pk-veg: #5F7230;     /* contents colour on the pack drawings */
   --frost: #D9E8EC;
@@ -170,6 +173,12 @@ h4 { font-size: 1.15rem; font-stretch: 85%; line-height: 1.15; }
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
 
+/* Range tags (product cards, quick view) */
+.tag { display: inline-block; font-size: .85rem; font-weight: 600; line-height: 1.4; padding: 3px 9px; border-radius: 2px; }
+.tag-preserved { background: var(--olive-tint); color: var(--olive-ink); box-shadow: inset 0 0 0 1px #D5DCB4; }
+.tag-iqf { background: var(--frost-tint); color: var(--frost-ink); box-shadow: inset 0 0 0 1px #C5DCE2; }
+.tag-dates { background: var(--date-tint); color: var(--date-ink); box-shadow: inset 0 0 0 1px #E3D3C1; }
+
 /* Sections ------------------------------------------------------------ */
 .section { padding-block: clamp(64px, 9vw, 120px); }
 .section-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px 56px; align-items: end; margin-bottom: clamp(32px, 5vw, 56px); }
@@ -177,20 +186,19 @@ h4 { font-size: 1.15rem; font-stretch: 85%; line-height: 1.15; }
 @media (max-width: 760px) { .section-head { grid-template-columns: 1fr; } }
 
 /* Two ranges */
-.ranges { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
-.range { padding: clamp(28px, 4vw, 48px); display: flex; flex-direction: column; gap: 18px; min-height: 420px; }
+.ranges { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+.range { padding: clamp(24px, 3vw, 40px); display: flex; flex-direction: column; gap: 18px; min-height: 420px; }
 .range-preserved { background: var(--olive-tint); border-top: 10px solid var(--olive); }
 .range-iqf { background: var(--frost-tint); border-top: 10px solid #9EC3CD; }
-.range h3 { font-size: clamp(1.9rem, 3.2vw, 2.7rem); }
-.range-packs { display: flex; align-items: flex-end; gap: 14px; margin-top: auto; padding-top: 12px; color: var(--brine); }
-.range-packs svg { height: calc(var(--h) * .62); width: auto; aspect-ratio: var(--ar); }
-.range-iqf .range-packs svg { --pk-band: var(--frost); }
-.range-photos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: auto; padding-top: 12px; list-style: none; }
-.range-photos img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 2px; }
+.range h3 { font-size: clamp(1.7rem, 2.6vw, 2.3rem); }
+.range-dates { background: var(--date-tint); border-top: 10px solid var(--date); }
+.range-photos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: auto; padding-top: 12px; list-style: none; }
+.range-photos li { position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 2px; }
+.range-photos img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .range .more { font-weight: 650; }
 .range-list { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 8px; }
 .range-list li { font-size: .92rem; padding: 2px 9px; border-radius: 2px; background: rgba(255,255,255,.7); }
-@media (max-width: 760px) { .ranges { grid-template-columns: 1fr; } .range { min-height: 0; } }
+@media (max-width: 960px) { .ranges { grid-template-columns: 1fr; } .range { min-height: 0; } .range-photos { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
 /* Buyers */
 .buyers { list-style: none; border-top: 2px solid var(--brine); }
@@ -265,6 +273,7 @@ h4 { font-size: 1.15rem; font-stretch: 85%; line-height: 1.15; }
 .chip:hover { border-color: var(--green); }
 .chip[aria-pressed="true"] { background: var(--brine); border-color: var(--brine); color: #fff; }
 .chip[data-value="preserved"][aria-pressed="true"] { background: var(--olive); border-color: var(--olive); color: var(--brine); }
+.chip[data-value="dates"][aria-pressed="true"] { background: var(--date); border-color: var(--date); color: #fff; }
 .chip[data-value="iqf"][aria-pressed="true"] { background: #9EC3CD; border-color: #9EC3CD; color: var(--brine); }
 .result-bar { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
 .result-count { font-weight: 600; }
@@ -279,10 +288,12 @@ h4 { font-size: 1.15rem; font-stretch: 85%; line-height: 1.15; }
 .product:hover { border-color: var(--green); }
 .product-art { display: flex; align-items: flex-end; justify-content: center; gap: 10px; height: 150px; padding: 16px 16px 0; color: var(--brine); border-bottom: 6px solid var(--olive); background: var(--olive-tint); }
 .product[data-range="iqf"] .product-art { background: var(--frost-tint); border-bottom-color: #9EC3CD; }
+.product[data-range="dates"] .product-art { background: var(--date-tint); border-bottom-color: var(--date); }
 .product[data-range="iqf"] .product-art svg { --pk-band: var(--frost); }
 .product-art svg { height: calc(var(--h) * .82); width: auto; aspect-ratio: var(--ar); }
-.product-art.has-img { padding: 0; height: 190px; }
-.product-art img { width: 100%; height: 100%; object-fit: cover; }
+/* photos: pinned to all four edges so small and large images fill the frame alike (Safari ignores % sizes on flex items here) */
+.product-art.has-img { display: block; position: relative; padding: 0; height: 190px; overflow: hidden; }
+.product-art.has-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .product-body { padding: 14px 16px 18px; display: grid; gap: 6px; }
 .product-name { font-weight: 750; font-stretch: 82%; font-size: 1.2rem; line-height: 1.12; }
 .product-meta { font-size: .9rem; color: var(--muted); }
@@ -304,9 +315,10 @@ dialog.quick {
 dialog.quick::backdrop { background: rgba(16, 48, 27, .6); }
 .quick-art { display: flex; align-items: flex-end; justify-content: center; gap: 18px; padding: 32px 24px 0; min-height: 200px; background: var(--olive-tint); border-bottom: 8px solid var(--olive); color: var(--brine); }
 .quick[data-range="iqf"] .quick-art { background: var(--frost-tint); border-bottom-color: #9EC3CD; }
+.quick[data-range="dates"] .quick-art { background: var(--date-tint); border-bottom-color: var(--date); }
 .quick[data-range="iqf"] .quick-art svg { --pk-band: var(--frost); }
-.quick-art.has-img { padding: 0; min-height: 0; }
-.quick-art img { width: 100%; height: clamp(200px, 40vh, 340px); object-fit: cover; }
+.quick-art.has-img { display: block; position: relative; padding: 0; min-height: 0; height: clamp(200px, 40vh, 340px); overflow: hidden; }
+.quick-art.has-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .quick-art svg { height: calc(var(--h) * 1.05); width: auto; aspect-ratio: var(--ar); }
 .quick-body { padding: 24px clamp(20px, 4vw, 36px) 32px; display: grid; gap: 18px; }
 .quick-body h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); }
