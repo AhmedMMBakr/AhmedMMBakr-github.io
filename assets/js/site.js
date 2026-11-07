@@ -50,16 +50,14 @@
     var q = params();
     var state = {
       range: q.get("range") || "all",
-      type: q.get("type") || "all",
-      pack: q.get("pack") || "all"
+      type: q.get("type") || "all"
     };
     var dialog = $("#quick");
     var opener = null, openId = null;
 
     var matches = function (p) {
       return (state.range === "all" || p.range === state.range) &&
-             (state.type === "all" || p.type === state.type) &&
-             (state.pack === "all" || p.packs.indexOf(state.pack) > -1);
+             (state.type === "all" || p.type === state.type);
     };
 
     var render = function () {
@@ -81,7 +79,7 @@
       }).join("");
       $("#results").textContent = list.length === 1 ? I.t("count.one") : I.t("count.many", { n: list.length });
       $("#empty").hidden = list.length > 0;
-      var filtered = state.range !== "all" || state.type !== "all" || state.pack !== "all";
+      var filtered = state.range !== "all" || state.type !== "all";
       $(".result-bar .reset").hidden = !filtered;
       $$(".chips").forEach(function (group) {
         var key = group.getAttribute("data-filter");
@@ -108,7 +106,7 @@
     });
     $$(".reset, .reset-inline").forEach(function (b) {
       b.addEventListener("click", function () {
-        state = { range: "all", type: "all", pack: "all" };
+        state = { range: "all", type: "all" };
         render(); syncUrl();
       });
     });

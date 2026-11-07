@@ -203,17 +203,13 @@ h4 { font-size: 1.15rem; font-stretch: 85%; line-height: 1.15; }
 /* Buyers */
 .buyers { list-style: none; border-top: 2px solid var(--brine); }
 .buyer {
-  display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.4fr) minmax(0, 1fr);
+  display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 2fr);
   gap: 16px 40px; padding: 32px 0; border-bottom: 1px solid var(--line); align-items: start;
 }
 .buyer h3 { font-size: clamp(1.5rem, 2.4vw, 2rem); }
-.buyer-packs { display: flex; align-items: flex-end; gap: 12px; color: var(--brine); justify-self: end; }
-.buyer-packs svg { height: calc(var(--h) * .5); width: auto; aspect-ratio: var(--ar); }
-.buyer-packs .iqf { --pk-band: var(--frost); }
 @media (max-width: 860px) {
   .buyer { grid-template-columns: 1fr; }
-  .buyer-packs { justify-self: start; }
-}
+  }
 
 /* Order steps — a real sequence, so numbered */
 .steps { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; counter-reset: step; }
