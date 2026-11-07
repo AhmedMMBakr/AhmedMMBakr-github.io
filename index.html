@@ -1,0 +1,663 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Infinity Import Export</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout concept: a trade catalogue. The hero is a pallet shipping tag whose spec lines switch per crop; the rest reads like a spec sheet: product cards, a real order sequence, an availability calendar, and an inquiry builder. */
+:root {
+  --bg: #EDF2F3;
+  --surface: #FFFFFF;
+  --ink: #102A2E;
+  --muted: #4A6368;
+  --line: #C9D7DA;
+  --frost: #DDEAEC;
+  --accent: #8C2447;
+  --accent-ink: #FFFFFF;
+  --gold: #C28A24;
+  --garlic: #F2ECDD;
+  --earth: #B98C5B;
+  --ice: #86C2D4;
+  --display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --body: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0B1E21; --surface: #12292D; --ink: #E7F0F0; --muted: #9DB5B8; --line: #28444A;
+    --frost: #16333A; --accent: #E88CAA; --accent-ink: #2A0E19; --gold: #E2B15A;
+    --garlic: #D9D2C0; --earth: #C79C68; --ice: #7FB9CC; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0B1E21; --surface: #12292D; --ink: #E7F0F0; --muted: #9DB5B8; --line: #28444A;
+  --frost: #16333A; --accent: #E88CAA; --accent-ink: #2A0E19; --gold: #E2B15A;
+  --garlic: #D9D2C0; --earth: #C79C68; --ice: #7FB9CC; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.55; }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; letter-spacing: -0.02em; line-height: 1.08; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.btn { display: inline-flex; align-items: center; gap: 8px; font: 600 15px/1 var(--body); padding: 14px 20px; border-radius: 4px; border: 2px solid var(--ink); text-decoration: none; cursor: pointer; background: transparent; color: var(--ink); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn:hover { transform: translateY(-1px); }
+
+/* Top bar */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-block: 20px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 700; font-size: 20px; letter-spacing: -0.01em; text-decoration: none; }
+.brand svg { width: 30px; height: 30px; flex: none; }
+.nav { display: flex; align-items: center; gap: 6px 22px; flex-wrap: wrap; font-size: 15px; font-weight: 500; }
+.nav a { text-decoration: none; color: var(--muted); }
+.nav a:hover { color: var(--ink); }
+.lang { font: 500 13px/1 var(--mono); padding: 8px 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 4px; cursor: pointer; }
+
+/* Hero */
+.hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center; padding-block: 40px 72px; }
+.hero > * { min-width: 0; }
+.hero h1 { font-size: clamp(2.2rem, 5.2vw, 3.9rem); margin-block: 14px 20px; }
+.hero .lead { font-size: 18px; color: var(--muted); max-width: 52ch; }
+.cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+.facts { display: flex; gap: 8px 28px; flex-wrap: wrap; margin-top: 32px; font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.facts span::before { content: "\2192 "; color: var(--accent); }
+
+.tagwrap { display: grid; gap: 14px; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tab { font: 500 13px/1 var(--mono); padding: 9px 12px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); border-radius: 4px; cursor: pointer; }
+.tab[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.tag { background: var(--surface); border: 2px solid var(--ink); border-radius: 6px; overflow: hidden; }
+.tag-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--ink); color: var(--bg); padding: 10px 16px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; }
+.tag-head [lang="ar"] { font-family: system-ui, 'Segoe UI', Tahoma, sans-serif; font-size: 15px; letter-spacing: 0; text-transform: none; }
+.tag-item { padding: 18px 16px 6px; font-family: var(--display); font-weight: 700; font-size: 28px; letter-spacing: -0.015em; line-height: 1.1; }
+.tag dl { margin: 0; padding: 8px 16px 14px; display: grid; grid-template-columns: 84px 1fr; gap: 0; font-family: var(--mono); font-size: 14px; }
+.tag dt { color: var(--muted); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; padding-block: 11px; border-top: 1px dashed var(--line); }
+.tag dd { margin: 0; padding-block: 9px; border-top: 1px dashed var(--line); }
+.tag-foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 16px 16px; border-top: 2px solid var(--ink); }
+.barcode { height: 34px; flex: 1; max-width: 190px; background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 5px, var(--ink) 5px 6px, transparent 6px 9px, var(--ink) 9px 12px, transparent 12px 14px); }
+.tag-foot span { font-family: var(--mono); font-size: 12px; color: var(--muted); text-align: right; }
+
+/* Sections */
+.section { padding-block: 72px; }
+.band { background: var(--frost); }
+.section-head { display: grid; gap: 12px; margin-bottom: 36px; max-width: 62ch; }
+.section-head h2 { font-size: clamp(1.7rem, 3.4vw, 2.5rem); }
+.section-head p { color: var(--muted); }
+
+.products { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 22px; display: grid; gap: 14px; align-content: start; min-width: 0; }
+.icon { width: 60px; height: 60px; border-radius: 6px; background: var(--frost); display: grid; place-items: center; }
+.icon svg { width: 40px; height: 40px; }
+.card h3 { font-size: 24px; }
+.card p { color: var(--muted); font-size: 15px; }
+.spec { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 0 14px; font-family: var(--mono); font-size: 12.5px; }
+.spec dt { color: var(--muted); padding-block: 8px; border-top: 1px dashed var(--line); text-transform: uppercase; letter-spacing: 0.08em; font-size: 11px; }
+.spec dd { margin: 0; padding-block: 7px; border-top: 1px dashed var(--line); overflow-wrap: anywhere; }
+.note { margin-top: 18px; font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+
+.customers { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 28px 32px; }
+.customers > div { border-top: 3px solid var(--ink); padding-top: 14px; display: grid; gap: 8px; align-content: start; }
+.customers h3 { font-size: 20px; }
+.customers p { color: var(--muted); font-size: 15px; }
+
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; counter-reset: s; }
+.steps li { counter-increment: s; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 18px; display: grid; gap: 8px; align-content: start; }
+.steps li::before { content: counter(s); font-family: var(--mono); font-weight: 500; font-size: 13px; color: var(--accent-ink); background: var(--accent); width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; }
+.steps h3 { font-size: 18px; }
+.steps p { font-size: 14.5px; color: var(--muted); }
+.docs { margin-top: 24px; font-size: 15px; color: var(--muted); max-width: 80ch; }
+.docs strong { color: var(--ink); font-weight: 600; }
+
+.cal { display: grid; gap: 8px; max-width: 760px; }
+.cal-row { display: grid; grid-template-columns: 88px repeat(12, 1fr); gap: 3px; align-items: center; }
+.cal-row > b { font-weight: 600; font-size: 14px; }
+.cal-m { font-family: var(--mono); font-size: 11px; color: var(--muted); text-align: center; }
+.cal-c { height: 26px; background: var(--line); border-radius: 2px; opacity: 0.55; }
+.cal-c.on { background: var(--gold); opacity: 1; }
+.cal-key { margin-top: 14px; font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+
+.inquiry { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+.inquiry > * { min-width: 0; }
+form { display: grid; gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 22px; }
+label, legend { font-size: 13px; font-weight: 600; display: grid; gap: 6px; padding: 0; }
+input[type="text"], select, textarea { font: 400 15px/1.4 var(--body); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 11px 12px; width: 100%; }
+fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; min-width: 0; }
+.checks { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.checks label { display: flex; align-items: center; gap: 8px; font-weight: 500; font-size: 14.5px; }
+.out { display: grid; gap: 12px; }
+.out textarea { min-height: 260px; font-family: var(--mono); font-size: 13px; resize: vertical; }
+.contact { display: grid; gap: 4px; font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.contact b { color: var(--ink); font-weight: 500; }
+
+footer { border-top: 1px solid var(--line); padding-block: 28px 36px; font-size: 14px; color: var(--muted); }
+footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+
+/* Catalogue */
+.catalog { display: grid; grid-template-columns: 230px 1fr; gap: 28px; align-items: start; }
+.catalog > * { min-width: 0; }
+.filters { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 18px; display: grid; gap: 12px; }
+.filters h3 { font-size: 18px; }
+.cats { display: grid; gap: 4px; }
+.cat { font: 500 15px/1.2 var(--body); text-align: left; padding: 10px 12px; border: 0; border-radius: 4px; background: transparent; color: var(--ink); cursor: pointer; }
+.cat.sub { padding-left: 26px; color: var(--muted); }
+.cat:hover { background: var(--frost); }
+.cat[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; }
+.pcard { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; display: grid; min-width: 0; }
+.pcard .pic { aspect-ratio: 4 / 3; background: var(--frost); display: grid; place-items: center; }
+.pcard .pic svg { width: 44%; max-width: 100px; height: auto; }
+.pcard .pbody { padding: 14px; display: grid; gap: 10px; align-content: start; }
+.pcard h3 { font-size: 17px; letter-spacing: -0.01em; }
+.qbtn { justify-self: start; font: 600 13px/1 var(--body); padding: 9px 12px; border: 1.5px solid var(--ink); border-radius: 4px; background: transparent; color: var(--ink); cursor: pointer; }
+.qbtn:hover { background: var(--ink); color: var(--bg); }
+.qv { position: fixed; inset: 0; z-index: 20; background: rgba(8, 20, 22, 0.62); display: grid; place-items: center; padding: 16px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.qv-panel { position: relative; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 26px; width: 100%; max-width: 520px; max-height: 90%; overflow: auto; display: grid; gap: 14px; }
+.qv-panel h3 { font-size: 26px; padding-right: 36px; }
+.qv-panel p { color: var(--muted); font-size: 15px; }
+.qv-icon { width: 76px; height: 76px; border-radius: 6px; background: var(--frost); display: grid; place-items: center; }
+.qv-icon svg { width: 48px; height: 48px; }
+.qv-close { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 4px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-size: 22px; line-height: 1; cursor: pointer; }
+.qv-panel .btn { justify-self: start; }
+footer .foot { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 28px; align-items: start; }
+.foot-name { font-family: var(--display); font-size: 20px; color: var(--ink); display: block; margin-bottom: 8px; }
+.foot-links { display: grid; gap: 6px; }
+.foot-links a { text-decoration: none; }
+.foot-links a:hover { color: var(--ink); }
+@media (max-width: 860px) {
+  .catalog { grid-template-columns: 1fr; }
+  .cats { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cat, .cat.sub { padding: 9px 12px; border: 1px solid var(--line); background: var(--bg); }
+  .cat[aria-pressed="true"] { border-color: var(--ink); }
+  footer .foot { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: 1fr; gap: 36px; padding-block: 24px 48px; }
+  .inquiry { grid-template-columns: 1fr; }
+  .section { padding-block: 52px; }
+}
+@media (max-width: 480px) {
+  .cal-row { grid-template-columns: 62px repeat(12, 1fr); gap: 2px; }
+  .tag-item { font-size: 24px; }
+  .tag dl { grid-template-columns: 70px 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { .btn:hover { transform: none; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#top" id="top">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="var(--ink)"/><path d="M9 16c0-2.6 1.8-4.2 3.6-4.2 4 0 3.4 8.4 6.8 8.4 1.8 0 3.6-1.6 3.6-4.2s-1.8-4.2-3.6-4.2c-3.4 0-2.8 8.4-6.8 8.4C10.8 20.2 9 18.6 9 16z" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linejoin="round"/></svg>
+      Infinity Import Export
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="#products" data-de="Produkte">Products</a>
+      <a href="#about" data-de="Über uns">About</a>
+      <a href="#ordering" data-de="Bestellung">Ordering</a>
+      <a href="#seasons" data-de="Saison">Seasons</a>
+      <a href="#inquiry" data-de="Kontakt">Contact</a>
+      <button class="lang" id="langBtn" type="button" aria-label="Switch language">DE</button>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div>
+      <p class="eyebrow" data-de="Import und Export aus Ägypten">Import and export from Egypt</p>
+      <h1 data-de="Zwiebeln, Knoblauch, Kartoffeln und Tiefkühlgemüse für die Profiküche.">Onions, garlic, potatoes and frozen vegetables for the professional kitchen.</h1>
+      <p class="lead" data-de="Wir liefern aus Ägypten an Hotels, Restaurants, Caterer und Großhändler. Gleichmäßige Größen, feste Gebindegrößen und klare Dokumente bei jeder Lieferung.">We supply hotels, restaurants, caterers and food service wholesalers from Egypt. Consistent sizes, fixed pack formats and clear paperwork on every shipment.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="#inquiry" data-de="Angebot anfragen">Request a quote</a>
+        <a class="btn" href="#products" data-de="Sortiment ansehen">See the range</a>
+      </div>
+      <div class="facts">
+        <span data-de="Ab 20-ft-Container">From a 20 ft container</span>
+        <span data-de="Frisch und tiefgekühlt">Fresh and frozen</span>
+        <span data-de="Anfrage in Englisch oder Deutsch">Inquiries in English or German</span>
+      </div>
+    </div>
+
+    <div class="tagwrap">
+      <div class="tabs" id="tabs" role="group" aria-label="Product examples"></div>
+      <div class="tag" aria-live="polite">
+        <div class="tag-head"><span>Product of Egypt</span><span lang="ar" dir="rtl">منتج مصري</span></div>
+        <div class="tag-item" id="tagItem"></div>
+        <dl id="tagList"></dl>
+        <div class="tag-foot"><div class="barcode" aria-hidden="true"></div><span data-de="Beispielangaben, je Auftrag bestätigt">Example spec, confirmed per order</span></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section class="section band" id="products">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow" data-de="Produkte">Products</p>
+      <h2 data-de="Unser Sortiment">Our product range</h2>
+      <p data-de="Wählen Sie eine Kategorie und öffnen Sie die Schnellansicht für Größen, Gebinde und Saison. Die Angaben sind typische Handelsspezifikationen und werden je Auftrag bestätigt.">Pick a category and open the quick view for sizes, packing and season. The figures are typical trade specifications, confirmed per order.</p>
+    </div>
+    <div class="catalog">
+      <aside class="filters" aria-label="Categories">
+        <h3 data-de="Kategorien">Categories</h3>
+        <div class="cats" id="cats"></div>
+      </aside>
+      <div class="pgrid" id="grid"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="about">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow" data-de="Über uns">About us</p>
+      <h2 data-de="Ein Ansprechpartner zwischen ägyptischen Erzeugern und Ihrer Küche.">One contact between Egyptian growers and your kitchen.</h2>
+      <p data-de="Infinity Import Export beschafft Zwiebeln, Knoblauch, Kartoffeln und Tiefkühlware in Ägypten und liefert an Gastronomie und Großhandel. Sortierung, Papiere und Fracht laufen über uns, damit Ihr Einkauf nur einen Kontakt hat.">Infinity Import Export sources onions, garlic, potatoes and frozen produce in Egypt and delivers to food service and wholesale buyers. Grading, paperwork and freight run through us, so your purchasing has one contact.</p>
+    </div>
+    <div class="customers">
+      <div><h3 data-de="Hotels und Resorts">Hotels and resorts</h3><p data-de="Gleichbleibende Qualität über die ganze Saison und Mengen, die zu Buffet und Bankett passen.">Steady quality across the season and volumes that fit buffet and banquet.</p></div>
+      <div><h3 data-de="Restaurants und Ketten">Restaurants and chains</h3><p data-de="Feste Größenklassen, damit Vorbereitungszeit und Portionskosten berechenbar bleiben.">Fixed size grades so prep time and portion cost stay predictable.</p></div>
+      <div><h3 data-de="Caterer und Großküchen">Caterers and contract kitchens</h3><p data-de="Große Gebinde, klare Chargen und Tiefkühlware, die ohne Verlust über Wochen lagert.">Large packs, clear batches and frozen stock that holds for weeks without loss.</p></div>
+      <div><h3 data-de="Großhändler">Wholesalers and distributors</h3><p data-de="Ganze Container zu festen Konditionen, mit Dokumenten, die der Zoll ohne Rückfrage annimmt.">Full containers on fixed terms, with paperwork that customs clears without questions.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section band" id="ordering">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow" data-de="Ablauf">How an order runs</p>
+      <h2 data-de="Von der Anfrage bis zur Entladung in fünf Schritten.">From inquiry to unloading in five steps.</h2>
+    </div>
+    <ol class="steps">
+      <li><h3 data-de="Anfrage">Inquiry</h3><p data-de="Sie nennen Ware, Menge und Zielhafen oder Lieferadresse.">You tell us the product, quantity and destination port or address.</p></li>
+      <li><h3 data-de="Muster und Spezifikation">Sample and spec</h3><p data-de="Wir senden Spezifikation und auf Wunsch ein Muster zur Freigabe.">We send the specification and, on request, a sample for approval.</p></li>
+      <li><h3 data-de="Angebot">Quote</h3><p data-de="Preis als FOB oder CIF, mit Zahlungsbedingungen und Verladetermin.">Price as FOB or CIF, with payment terms and loading date.</p></li>
+      <li><h3 data-de="Prüfung und Verladung">Inspection and loading</h3><p data-de="Sortierung, Verpackung und Kontrolle vor der Verladung im Hafen Alexandria oder Damietta.">Grading, packing and checks before loading at Alexandria or Damietta.</p></li>
+      <li><h3 data-de="Versand und Papiere">Shipping and papers</h3><p data-de="Seefracht zu Ihrem Hafen. Dokumente gehen vorab an Sie und Ihren Spediteur.">Sea freight to your port. Documents go ahead to you and your forwarder.</p></li>
+    </ol>
+    <p class="docs"><strong data-de="Dokumente je Sendung:">Documents with each shipment:</strong> <span data-de="Handelsrechnung, Packliste, Ursprungszeugnis, Pflanzengesundheitszeugnis und, wo anwendbar, EUR.1.">commercial invoice, packing list, certificate of origin, phytosanitary certificate and, where applicable, EUR.1.</span></p>
+  </div>
+</section>
+
+<section class="section" id="seasons">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow" data-de="Verfügbarkeit">Availability</p>
+      <h2 data-de="Wann welche Ware am besten verfügbar ist.">When each product is easiest to source.</h2>
+      <p data-de="Richtwerte nach üblichen Erntezeiten und Lagerung. Die genaue Verfügbarkeit bestätigen wir bei Ihrer Anfrage.">Indicative windows based on usual harvest and storage. We confirm exact availability when you inquire.</p>
+    </div>
+    <div class="cal" id="cal"></div>
+    <p class="cal-key" data-de="Gelb markiert: Hauptlieferzeitraum. Tiefkühlware ist ganzjährig lieferbar.">Gold marks the main supply window. Frozen is available all year.</p>
+  </div>
+</section>
+
+<section class="section band" id="inquiry">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow" data-de="Anfrage">Inquiry</p>
+      <h2 data-de="Stellen Sie Ihre Anfrage zusammen.">Put your inquiry together.</h2>
+      <p data-de="Füllen Sie das Formular aus, kopieren Sie den Text und senden Sie ihn per E-Mail oder WhatsApp an uns.">Fill in the form, copy the text and send it to us by email or WhatsApp.</p>
+    </div>
+    <div class="inquiry">
+      <form id="form">
+        <label><span data-de="Name">Name</span><input type="text" id="f-name" autocomplete="name"></label>
+        <label><span data-de="Art des Betriebs">Type of business</span>
+          <select id="f-biz">
+            <option value="hotel" data-de="Hotel oder Resort">Hotel or resort</option>
+            <option value="restaurant" data-de="Restaurant oder Kette">Restaurant or chain</option>
+            <option value="caterer" data-de="Caterer oder Großküche">Caterer or contract kitchen</option>
+            <option value="wholesale" data-de="Großhändler">Wholesaler or distributor</option>
+          </select>
+        </label>
+        <fieldset>
+          <legend data-de="Produkte">Products</legend>
+          <div class="checks">
+            <label><input type="checkbox" name="p" value="onion" id="p-onion" checked><span data-de="Zwiebeln">Onions</span></label>
+            <label><input type="checkbox" name="p" value="garlic" id="p-garlic"><span data-de="Knoblauch">Garlic</span></label>
+            <label><input type="checkbox" name="p" value="potato" id="p-potato"><span data-de="Kartoffeln">Potatoes</span></label>
+            <label><input type="checkbox" name="p" value="frozen" id="p-frozen"><span data-de="Tiefkühlware">Frozen</span></label>
+          </div>
+        </fieldset>
+        <label><span data-de="Menge">Quantity</span><input type="text" id="f-qty" data-ph-en="e.g. 2 containers per month" data-ph-de="z. B. 2 Container pro Monat"></label>
+        <label><span data-de="Zielhafen oder Lieferort">Destination port or delivery address</span><input type="text" id="f-dest" data-ph-en="e.g. Hamburg" data-ph-de="z. B. Hamburg"></label>
+        <label><span data-de="Anmerkungen">Notes</span><textarea id="f-notes" rows="3" data-ph-en="Sizes, packing, variety, start date" data-ph-de="Größen, Verpackung, Sorte, Starttermin"></textarea></label>
+        <button class="btn primary" type="submit" data-de="Anfragetext erstellen">Build inquiry text</button>
+      </form>
+      <div class="out">
+        <label><span data-de="Ihr Anfragetext">Your inquiry text</span><textarea id="out" readonly data-ph-en="Your inquiry text appears here after you build it." data-ph-de="Ihr Anfragetext erscheint hier, sobald Sie ihn erstellt haben."></textarea></label>
+        <div><button class="btn" type="button" id="copyBtn" data-de="Text kopieren">Copy text</button></div>
+        <div class="contact">
+          <span data-de="Senden an:">Send to:</span>
+          <b>info@yourcompany.com</b>
+          <b>WhatsApp: +20 000 000 0000</b>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <div>
+      <b class="foot-name">Infinity Import Export</b>
+      <p data-de="Import und Export aus Ägypten: Zwiebeln, Knoblauch, Kartoffeln und Tiefkühlware für Gastronomie und Großhandel.">Import and export from Egypt: onions, garlic, potatoes and frozen produce for food service and wholesale.</p>
+    </div>
+    <nav aria-label="Footer" class="foot-links">
+      <a href="#products" data-de="Produkte">Products</a>
+      <a href="#about" data-de="Über uns">About</a>
+      <a href="#ordering" data-de="Bestellung">Ordering</a>
+      <a href="#seasons" data-de="Saison">Seasons</a>
+      <a href="#inquiry" data-de="Kontakt">Contact</a>
+    </nav>
+    <div class="contact">
+      <b>info@infinity-import-export.de</b>
+      <b>infinity-import-export.de</b>
+      <span>&copy; 2026</span>
+    </div>
+  </div>
+</footer>
+
+<div class="qv" id="qv" hidden role="dialog" aria-modal="true" aria-labelledby="qvTitle">
+  <div class="qv-panel">
+    <button class="qv-close" id="qvClose" type="button" aria-label="Close">&times;</button>
+    <div class="qv-icon" id="qvIcon"></div>
+    <h3 id="qvTitle"></h3>
+    <p id="qvDesc"></p>
+    <dl class="spec" id="qvSpec"></dl>
+    <button class="btn primary" id="qvAsk" type="button"></button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var lang = ((navigator.language || 'de') + '').toLowerCase().indexOf('en') === 0 ? 'en' : 'de';
+
+  var TAGS = {
+    onion:  { tab: ['Onion', 'Zwiebel'],     item: ['Onion, yellow or red', 'Zwiebel, gelb oder rot'], size: '60–80 mm',  pack: ['25 kg mesh bag', '25-kg-Netzsack'], load: '20 ft / 40 ft', store: ['Dry, ventilated', 'Trocken, belüftet'] },
+    garlic: { tab: ['Garlic', 'Knoblauch'],  item: ['Fresh garlic, white', 'Frischer Knoblauch, weiß'], size: '5.5–6.0 cm', pack: ['10 kg carton', '10-kg-Karton'],    load: '20 ft / 40 ft', store: ['Dry, ventilated', 'Trocken, belüftet'] },
+    potato: { tab: ['Potato', 'Kartoffel'],  item: ['Table potato, Spunta', 'Speisekartoffel, Spunta'], size: '50–80 mm',  pack: ['25 kg bag', '25-kg-Sack'],         load: '20 ft / 40 ft', store: ['Cool, dark, ventilated', 'Kühl, dunkel, belüftet'] },
+    frozen: { tab: ['Frozen', 'Tiefkühl'],   item: ['IQF green beans, cut', 'Grüne Bohnen IQF, geschnitten'], size: '3–5 cm', pack: ['10 kg carton', '10-kg-Karton'],  load: ['40 ft reefer', '40-ft-Kühlcontainer'], store: ['−18 °C', '−18 °C'] }
+  };
+  var LABELS = { item: ['Item', 'Ware'], size: ['Size', 'Größe'], pack: ['Pack', 'Gebinde'], load: ['Load', 'Ladung'], store: ['Keep', 'Lagerung'] };
+  var current = 'onion';
+
+  var CAL = [
+    { name: ['Onions', 'Zwiebeln'],       on: [1,2,3,4,5,6,7,8] },
+    { name: ['Garlic', 'Knoblauch'],      on: [3,4,5,6,7,8,9] },
+    { name: ['Potatoes', 'Kartoffeln'],   on: [0,1,2,3,4,5] },
+    { name: ['Frozen', 'Tiefkühl'],       on: [0,1,2,3,4,5,6,7,8,9,10,11] }
+  ];
+  var MONTHS = [
+    ['J','F','M','A','M','J','J','A','S','O','N','D'],
+    ['J','F','M','A','M','J','J','A','S','O','N','D']
+  ];
+  var MONTH_FULL = [
+    ['January','February','March','April','May','June','July','August','September','October','November','December'],
+    ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
+  ];
+
+  var S = {
+    copy: ['Copy text', 'Text kopieren'], copied: ['Copied', 'Kopiert'],
+    bizLabel: ['Business', 'Betrieb'],
+    hello: ['Hello, I would like to request a quote.', 'Guten Tag, ich möchte ein Angebot anfragen.'],
+    name: ['Name', 'Name'], products: ['Products', 'Produkte'], qty: ['Quantity', 'Menge'], dest: ['Destination', 'Ziel'], notes: ['Notes', 'Anmerkungen'],
+    thanks: ['Thank you.', 'Vielen Dank.']
+  };
+  var PNAME = { onion: ['Onions','Zwiebeln'], garlic: ['Garlic','Knoblauch'], potato: ['Potatoes','Kartoffeln'], frozen: ['Frozen vegetables and fruit','Tiefkühlgemüse und -obst'] };
+
+  function li() { return lang === 'de' ? 1 : 0; }
+  function pick(v) { return Array.isArray(v) ? v[li()] : v; }
+
+  function renderTabs() {
+    var box = document.getElementById('tabs');
+    box.innerHTML = '';
+    Object.keys(TAGS).forEach(function (k) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'tab';
+      b.textContent = TAGS[k].tab[li()];
+      b.setAttribute('aria-pressed', k === current ? 'true' : 'false');
+      b.addEventListener('click', function () { current = k; renderTabs(); renderTag(); });
+      box.appendChild(b);
+    });
+  }
+  function renderTag() {
+    var t = TAGS[current];
+    document.getElementById('tagItem').textContent = pick(t.item);
+    var dl = document.getElementById('tagList');
+    dl.innerHTML = '';
+    ['size', 'pack', 'load', 'store'].forEach(function (key) {
+      var dt = document.createElement('dt'); dt.textContent = LABELS[key][li()];
+      var dd = document.createElement('dd'); dd.textContent = pick(t[key]);
+      dl.appendChild(dt); dl.appendChild(dd);
+    });
+  }
+  function renderCal() {
+    var cal = document.getElementById('cal');
+    cal.innerHTML = '';
+    var head = document.createElement('div');
+    head.className = 'cal-row';
+    head.appendChild(document.createElement('span'));
+    MONTHS[li()].forEach(function (m, i) {
+      var s = document.createElement('span'); s.className = 'cal-m'; s.textContent = m; s.title = MONTH_FULL[li()][i];
+      head.appendChild(s);
+    });
+    cal.appendChild(head);
+    CAL.forEach(function (row) {
+      var r = document.createElement('div'); r.className = 'cal-row';
+      var first = row.on[0], last = row.on[row.on.length - 1];
+      r.setAttribute('role', 'img');
+      r.setAttribute('aria-label', row.name[li()] + ': ' + MONTH_FULL[li()][first] + ' – ' + MONTH_FULL[li()][last]);
+      var b = document.createElement('b'); b.textContent = row.name[li()]; r.appendChild(b);
+      for (var i = 0; i < 12; i++) {
+        var c = document.createElement('span');
+        c.className = 'cal-c' + (row.on.indexOf(i) > -1 ? ' on' : '');
+        r.appendChild(c);
+      }
+      cal.appendChild(r);
+    });
+  }
+  function applyLang() {
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-de]').forEach(function (el) {
+      if (!el.dataset.en) el.dataset.en = el.textContent;
+      el.textContent = lang === 'de' ? el.dataset.de : el.dataset.en;
+    });
+    document.querySelectorAll('[data-ph-en]').forEach(function (el) {
+      el.placeholder = lang === 'de' ? el.dataset.phDe : el.dataset.phEn;
+    });
+    document.getElementById('langBtn').textContent = lang === 'de' ? 'EN' : 'DE';
+    document.getElementById('langBtn').setAttribute('aria-label', lang === 'de' ? 'Switch to English' : 'Auf Deutsch umschalten');
+    renderTabs(); renderTag(); renderCal(); renderCatalog();
+  }
+
+  document.getElementById('langBtn').addEventListener('click', function () {
+    lang = lang === 'de' ? 'en' : 'de';
+    document.getElementById('out').value = '';
+    applyLang();
+  });
+
+  document.getElementById('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var i = li();
+    var biz = document.getElementById('f-biz');
+    var prods = Array.prototype.slice.call(document.querySelectorAll('input[name="p"]:checked')).map(function (c) { return PNAME[c.value][i]; });
+    var lines = [
+      S.hello[i], '',
+      S.name[i] + ': ' + document.getElementById('f-name').value.trim(),
+      S.bizLabel[i] + ': ' + biz.options[biz.selectedIndex].textContent,
+      S.products[i] + ': ' + prods.join(', '),
+      S.qty[i] + ': ' + document.getElementById('f-qty').value.trim(),
+      S.dest[i] + ': ' + document.getElementById('f-dest').value.trim()
+    ];
+    var notes = document.getElementById('f-notes').value.trim();
+    if (notes) lines.push(S.notes[i] + ': ' + notes);
+    lines.push('', S.thanks[i]);
+    document.getElementById('out').value = lines.join('\n');
+  });
+
+  document.getElementById('copyBtn').addEventListener('click', function () {
+    var out = document.getElementById('out');
+    var btn = this;
+    if (!out.value) return;
+    function done() {
+      btn.textContent = S.copied[li()];
+      setTimeout(function () { btn.textContent = S.copy[li()]; }, 1600);
+    }
+    function fallback() { out.focus(); out.select(); }
+    try {
+      navigator.clipboard.writeText(out.value).then(done, fallback);
+    } catch (err) { fallback(); }
+  });
+
+  /* Catalogue */
+  var CATS = [
+    { k: 'all',    sub: false, t: ['All products', 'Alle Produkte'] },
+    { k: 'fresh',  sub: false, t: ['Fresh produce', 'Frischware'] },
+    { k: 'onion',  sub: true,  t: ['Onions', 'Zwiebeln'] },
+    { k: 'garlic', sub: true,  t: ['Garlic', 'Knoblauch'] },
+    { k: 'potato', sub: true,  t: ['Potatoes', 'Kartoffeln'] },
+    { k: 'frozen', sub: false, t: ['Frozen (IQF)', 'Tiefkühlware (IQF)'] }
+  ];
+  var SPECLBL = { size: ['Size', 'Größe'], pack: ['Pack', 'Gebinde'], keep: ['Storage', 'Lagerung'], season: ['Season', 'Saison'], process: ['Process', 'Verfahren'], use: ['Best for', 'Eignung'] };
+  var UI = {
+    quick: ['Quick view', 'Schnellansicht'], close: ['Close', 'Schließen'],
+    ask: ['Request a quote for this product', 'Angebot für dieses Produkt anfragen']
+  };
+  var DRY = ['Dry, ventilated', 'Trocken, belüftet'];
+  var FROZEN_PACK = ['1, 2.5 and 10 kg bags in carton', '1-, 2,5- und 10-kg-Beutel im Karton'];
+  var FROZEN_KEEP = ['−18 °C, reefer container', '−18 °C, Kühlcontainer'];
+  var ALLYEAR = ['All year', 'Ganzjährig'];
+
+  var PROD = [
+    { cat: 'onion', kind: 'onion', color: 'var(--gold)', name: ['Yellow onion', 'Gelbe Zwiebel'],
+      desc: ['Dry yellow onion with firm, tight skins. A kitchen all-rounder for stocks, sauces and sautéing.', 'Trockene gelbe Zwiebel mit fester, anliegender Schale. Der Allrounder für Fonds, Saucen und zum Anbraten.'],
+      specs: [['size', '40–60, 60–80, 70+ mm'], ['pack', ['10 and 25 kg mesh bag', '10- und 25-kg-Netzsack']], ['keep', DRY], ['season', ['February to September', 'Februar bis September']]] },
+    { cat: 'onion', kind: 'onion', color: 'var(--accent)', name: ['Red onion', 'Rote Zwiebel'],
+      desc: ['Red onion with a mild, slightly sweet bite. Suits salads, pickling, grilling and garnish.', 'Rote Zwiebel mit mildem, leicht süßem Biss. Passt zu Salaten, zum Einlegen, Grillen und Garnieren.'],
+      specs: [['size', '40–60, 60–80 mm'], ['pack', ['10 and 25 kg mesh bag', '10- und 25-kg-Netzsack']], ['keep', DRY], ['season', ['February to September', 'Februar bis September']]] },
+    { cat: 'garlic', kind: 'garlic', color: 'var(--garlic)', name: ['Fresh white garlic', 'Frischer weißer Knoblauch'],
+      desc: ['White garlic with firm cloves and dry skins, calibrated by bulb diameter for even portioning.', 'Weißer Knoblauch mit festen Zehen und trockener Schale, nach Knollendurchmesser kalibriert für gleichmäßige Portionen.'],
+      specs: [['size', '5.0–5.5, 5.5–6.0, 6.0+ cm'], ['pack', ['5 and 10 kg carton or mesh', '5- und 10-kg-Karton oder Netz']], ['keep', DRY], ['season', ['April to October', 'April bis Oktober']]] },
+    { cat: 'potato', kind: 'potato', color: 'var(--earth)', name: ['Spunta potato', 'Kartoffel Spunta'],
+      desc: ['Long oval table potato with yellow flesh. A common choice for fries, wedges and boiling.', 'Langovale Speisekartoffel mit gelbem Fleisch. Eine verbreitete Wahl für Pommes, Wedges und zum Kochen.'],
+      specs: [['size', '40–60, 50–80 mm'], ['pack', ['10 and 25 kg bag', '10- und 25-kg-Sack']], ['use', ['Fries, wedges, boiling', 'Pommes, Wedges, Kochen']], ['season', ['January to June', 'Januar bis Juni']]] },
+    { cat: 'potato', kind: 'potato', color: 'var(--earth)', name: ['Diamant potato', 'Kartoffel Diamant'],
+      desc: ['Round to oval table potato with a smooth skin. Holds its shape when boiled and roasts evenly.', 'Runde bis ovale Speisekartoffel mit glatter Schale. Bleibt beim Kochen formstabil und gart im Ofen gleichmäßig.'],
+      specs: [['size', '40–60, 50–80 mm'], ['pack', ['10 and 25 kg bag', '10- und 25-kg-Sack']], ['use', ['Roasting, boiling', 'Ofenkartoffeln, Kochen']], ['season', ['January to June', 'Januar bis Juni']]] },
+    { cat: 'frozen', kind: 'frozen', color: '#5E9E5A', name: ['IQF green beans', 'Grüne Bohnen IQF'],
+      desc: ['Green beans, trimmed and individually quick frozen. Free-flowing, so you take out only what you need.', 'Grüne Bohnen, geputzt und einzeln schockgefrostet. Rieselfähig, sodass Sie nur die benötigte Menge entnehmen.'],
+      specs: [['process', 'IQF'], ['size', ['Cut 3–5 cm or whole', 'Geschnitten 3–5 cm oder ganz']], ['pack', FROZEN_PACK], ['keep', FROZEN_KEEP], ['season', ALLYEAR]] },
+    { cat: 'frozen', kind: 'frozen', color: '#7DAA55', name: ['IQF okra', 'Okra IQF'],
+      desc: ['Okra pods, whole or cut, frozen at peak freshness for stews and slow-cooked dishes.', 'Okraschoten, ganz oder geschnitten, frisch gefroren für Eintöpfe und Schmorgerichte.'],
+      specs: [['process', 'IQF'], ['size', ['Whole or cut', 'Ganz oder geschnitten']], ['pack', FROZEN_PACK], ['keep', FROZEN_KEEP], ['season', ALLYEAR]] },
+    { cat: 'frozen', kind: 'frozen', color: '#6FB36A', name: ['IQF green peas', 'Grüne Erbsen IQF'],
+      desc: ['Sweet green peas, individually frozen and ready to use as a side or in rice and soups.', 'Süße grüne Erbsen, einzeln gefroren und fertig für Beilage, Reis oder Suppe.'],
+      specs: [['process', 'IQF'], ['pack', FROZEN_PACK], ['keep', FROZEN_KEEP], ['season', ALLYEAR]] },
+    { cat: 'frozen', kind: 'frozen', color: '#3F8A4F', name: ['IQF molokhia', 'Molokhia IQF'],
+      desc: ['Chopped molokhia leaves, a staple of Egyptian cooking, frozen for a steady supply all year.', 'Gehackte Molokhia-Blätter, ein Klassiker der ägyptischen Küche, tiefgekühlt für ganzjährig gleichmäßige Versorgung.'],
+      specs: [['process', 'IQF'], ['size', ['Chopped', 'Gehackt']], ['pack', FROZEN_PACK], ['keep', FROZEN_KEEP], ['season', ALLYEAR]] },
+    { cat: 'frozen', kind: 'frozen', color: '#D6455D', name: ['IQF strawberries', 'Erdbeeren IQF'],
+      desc: ['Strawberries frozen whole or in pieces for desserts, smoothies and sauces.', 'Erdbeeren, ganz oder in Stücken gefroren, für Desserts, Smoothies und Saucen.'],
+      specs: [['process', 'IQF'], ['size', ['Whole or pieces', 'Ganz oder in Stücken']], ['pack', ['10 kg carton', '10-kg-Karton']], ['keep', FROZEN_KEEP], ['season', ALLYEAR]] },
+    { cat: 'frozen', kind: 'frozen', color: '#3E8E55', name: ['IQF broccoli', 'Brokkoli IQF'],
+      desc: ['Broccoli florets, individually frozen to keep their shape and colour through steaming and sautéing.', 'Brokkoliröschen, einzeln gefroren, damit Form und Farbe beim Dämpfen und Braten erhalten bleiben.'],
+      specs: [['process', 'IQF'], ['size', ['Florets', 'Röschen']], ['pack', FROZEN_PACK], ['keep', FROZEN_KEEP], ['season', ALLYEAR]] }
+  ];
+
+  var catKey = 'all';
+  var openIdx = -1;
+
+  function icon(kind, color) {
+    if (kind === 'onion') return '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6c1 6 2 9 4 12 11 4 18 12 18 23 0 10-8 16-22 16S10 51 10 41c0-11 7-19 18-23 2-3 3-6 4-12z" fill="' + color + '"/><path d="M32 18c-9 8-9 31 0 39M32 18c9 8 9 31 0 39" fill="none" stroke="var(--bg)" stroke-width="2" opacity=".7"/><path d="M28 57l-2 5M32 57v6M36 57l2 5" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"/></svg>';
+    if (kind === 'garlic') return '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6c2 6 3 9 3 13 10 4 18 12 18 23 0 9-8 15-21 15S11 51 11 42c0-11 8-19 18-23 0-4 1-7 3-13z" fill="' + color + '" stroke="var(--muted)" stroke-width="2"/><path d="M32 19c-6 8-6 30 0 38M32 19c6 8 6 30 0 38M24 24c-7 8-6 26 2 33M40 24c7 8 6 26-2 33" fill="none" stroke="var(--muted)" stroke-width="1.6" opacity=".7"/></svg>';
+    if (kind === 'potato') return '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 36c0-14 12-24 26-24 10 0 16 7 14 18-2 14-14 24-27 24-8 0-13-7-13-18z" fill="' + color + '"/><g fill="#5C4126" opacity=".55"><circle cx="24" cy="30" r="1.8"/><circle cx="38" cy="22" r="1.8"/><circle cx="40" cy="42" r="1.8"/><circle cx="26" cy="46" r="1.8"/></g></svg>';
+    return '<svg viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="var(--ice)" stroke-width="4" stroke-linecap="round"><path d="M32 5v54M9 18l46 28M9 46l46-28"/></g><circle cx="32" cy="32" r="15" fill="' + color + '"/></svg>';
+  }
+
+  function inCat(p) {
+    if (catKey === 'all') return true;
+    if (catKey === 'fresh') return p.cat !== 'frozen';
+    return p.cat === catKey;
+  }
+
+  function renderCatalog() {
+    var i = li();
+    var cats = document.getElementById('cats');
+    cats.innerHTML = '';
+    CATS.forEach(function (c) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'cat' + (c.sub ? ' sub' : '');
+      b.textContent = c.t[i];
+      b.setAttribute('aria-pressed', c.k === catKey ? 'true' : 'false');
+      b.addEventListener('click', function () { catKey = c.k; renderCatalog(); });
+      cats.appendChild(b);
+    });
+    var grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    PROD.forEach(function (p, idx) {
+      if (!inCat(p)) return;
+      var card = document.createElement('article');
+      card.className = 'pcard';
+      var pic = document.createElement('div');
+      pic.className = 'pic';
+      pic.innerHTML = icon(p.kind, p.color);
+      var body = document.createElement('div');
+      body.className = 'pbody';
+      var h = document.createElement('h3');
+      h.textContent = p.name[i];
+      var q = document.createElement('button');
+      q.type = 'button';
+      q.className = 'qbtn';
+      q.textContent = UI.quick[i];
+      q.addEventListener('click', function () { openQV(idx); });
+      body.appendChild(h); body.appendChild(q);
+      card.appendChild(pic); card.appendChild(body);
+      grid.appendChild(card);
+    });
+    document.getElementById('qvClose').setAttribute('aria-label', UI.close[i]);
+    if (openIdx > -1) fillQV();
+  }
+
+  function fillQV() {
+    var i = li(), p = PROD[openIdx];
+    document.getElementById('qvIcon').innerHTML = icon(p.kind, p.color);
+    document.getElementById('qvTitle').textContent = p.name[i];
+    document.getElementById('qvDesc').textContent = p.desc[i];
+    var dl = document.getElementById('qvSpec');
+    dl.innerHTML = '';
+    p.specs.forEach(function (sp) {
+      var dt = document.createElement('dt'); dt.textContent = SPECLBL[sp[0]][i];
+      var dd = document.createElement('dd'); dd.textContent = pick(sp[1]);
+      dl.appendChild(dt); dl.appendChild(dd);
+    });
+    document.getElementById('qvAsk').textContent = UI.ask[i];
+  }
+  function openQV(idx) {
+    openIdx = idx;
+    fillQV();
+    document.getElementById('qv').hidden = false;
+    document.getElementById('qvClose').focus();
+  }
+  function closeQV() {
+    openIdx = -1;
+    document.getElementById('qv').hidden = true;
+  }
+  document.getElementById('qvClose').addEventListener('click', closeQV);
+  document.getElementById('qv').addEventListener('click', function (e) { if (e.target === this) closeQV(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && openIdx > -1) closeQV(); });
+  document.getElementById('qvAsk').addEventListener('click', function () {
+    var p = PROD[openIdx];
+    var box = document.getElementById('p-' + p.cat);
+    if (box) box.checked = true;
+    closeQV();
+    document.getElementById('inquiry').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  applyLang();
+})();
+</script>
+
+</body></html>
