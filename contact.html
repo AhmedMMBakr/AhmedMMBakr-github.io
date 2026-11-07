@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="contact.title">Request an offer | Infinity Import Export</title>
+  <meta name="description" content="Ask Infinity Import Export for an offer on preserved or IQF frozen vegetables from Egypt." data-i18n-attr="content:contact.desc">
+  <link rel="icon" href="assets/img/icon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="assets/img/icon-180.png">
+  <link rel="preload" href="assets/fonts/archivo-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script>(function(){var d=document.documentElement,l;d.classList.add('js');try{l=localStorage.getItem('lang')}catch(e){}if(!l)l=/^de/i.test(navigator.language||'')?'de':'en';d.lang=l;if(l==='de'){d.classList.add('i18n-pending');setTimeout(function(){d.classList.remove('i18n-pending')},1500)}})();</script>
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <img src="assets/img/logo.png" alt="" width="52" height="37">
+      <span class="brand-name">Infinity<span>Import Export</span></span>
+    </a>
+    <div class="lang" role="group" aria-label="Language / Sprache">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-lang="de" aria-pressed="false">DE</button>
+    </div>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="2"/></svg>
+      <span data-i18n="nav.menu">Menu</span>
+    </button>
+    <nav class="nav" id="nav" aria-label="Main">
+      <ul class="nav-links">
+        <li><a href="products.html" data-i18n="nav.products">Products</a></li>
+        <li><a href="about.html" data-i18n="nav.about">About us</a></li>
+        <li><a href="contact.html" aria-current="page" data-i18n="nav.contact">Contact</a></li>
+      </ul>
+      <a class="btn btn-solid" href="contact.html" data-i18n="cta.offer">Request an offer</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="page-head">
+    <div class="wrap">
+      <h1 data-i18n="contact.h1">Request an offer</h1>
+      <p class="lead" data-i18n="contact.lead">Fill in what you know. The form writes an email for you to send from your own mail program, so nothing is stored on this website.</p>
+    </div>
+  </section>
+
+  <div class="wrap contact">
+    <form class="form" id="inquiry" novalidate>
+      <div class="field">
+        <label for="f-company" data-i18n="form.company">Company</label>
+        <input type="text" id="f-company" name="company" autocomplete="organization" required>
+      </div>
+      <div class="field">
+        <label for="f-name" data-i18n="form.name">Your name</label>
+        <input type="text" id="f-name" name="name" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="f-email" data-i18n="form.email">Email</label>
+        <input type="email" id="f-email" name="email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="f-country" data-i18n="form.country">Country</label>
+        <input type="text" id="f-country" name="country" autocomplete="country-name">
+      </div>
+      <div class="field full">
+        <label for="f-type" data-i18n="form.type">Type of business</label>
+        <select id="f-type" name="type">
+          <option value="" data-i18n="form.type.choose">Choose one</option>
+          <option value="factory" data-i18n="buyer.factory.h">Food factories</option>
+          <option value="horeca" data-i18n="buyer.horeca.h">Hotels, restaurants and caterers</option>
+          <option value="import" data-i18n="buyer.import.h">Importers and wholesalers</option>
+          <option value="other" data-i18n="form.type.other">Other</option>
+        </select>
+      </div>
+      <div class="field full">
+        <label for="f-products" data-i18n="form.products">Products and quantities</label>
+        <textarea id="f-products" name="products" required aria-describedby="f-products-hint"></textarea>
+        <span class="hint" id="f-products-hint" data-i18n="form.products.hint">For example: grilled eggplant slices in oil, 3 kg tins, 2 pallets per month.</span>
+      </div>
+      <fieldset>
+        <legend data-i18n="form.packs">Pack formats you're interested in</legend>
+        <div class="checks" id="pack-checks"></div>
+      </fieldset>
+      <div class="field full">
+        <label for="f-dest" data-i18n="form.dest">Destination port or delivery address</label>
+        <input type="text" id="f-dest" name="dest">
+      </div>
+      <div class="field full">
+        <label for="f-msg" data-i18n="form.msg">Anything else</label>
+        <textarea id="f-msg" name="msg" aria-describedby="f-msg-hint"></textarea>
+        <span class="hint" id="f-msg-hint" data-i18n="form.msg.hint">Spec requirements, certificates you need, private label, delivery dates.</span>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-solid" type="submit" data-i18n="form.send">Open in email</button>
+        <button class="btn" type="button" id="copy" data-i18n="form.copy">Copy inquiry text</button>
+      </div>
+      <p class="form-status" id="status" role="status"></p>
+      <div class="out" id="out">
+        <label for="out-text" data-i18n="form.out">Your inquiry text. Paste it into an email to info@infinity-import-export.de.</label>
+        <textarea id="out-text" readonly></textarea>
+      </div>
+    </form>
+
+    <aside class="contact-aside">
+      <div>
+        <h2 data-i18n="contact.direct">Write to us directly</h2>
+        <p><a class="email" href="mailto:info@infinity-import-export.de">info@infinity-import-export.de</a></p>
+        <p class="small" data-i18n="footer.langs">We answer in English and German.</p>
+        <!-- Add phone / WhatsApp here when ready, for example:
+        <p><a href="tel:+49000000000">+49 000 000000</a></p>
+        <p><a href="https://wa.me/49000000000">WhatsApp</a></p>
+        -->
+      </div>
+      <div class="aside-box">
+        <h2 data-i18n="contact.helps">What helps us quote quickly</h2>
+        <ul class="checklist">
+          <li data-i18n="contact.h1i">Product, cut and size</li>
+          <li data-i18n="contact.h2i">Pack format and quantity per order</li>
+          <li data-i18n="contact.h3i">How often you order</li>
+          <li data-i18n="contact.h4i">Destination port or city</li>
+          <li data-i18n="contact.h5i">Certificates you need (e.g. IFS, BRCGS, Halal, Kosher)</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <a class="brand" href="index.html" style="margin-bottom:14px">
+        <img src="assets/img/logo.png" alt="" width="44" height="31">
+        <span class="brand-name">Infinity<span>Import Export</span></span>
+      </a>
+      <p data-i18n="footer.p">Preserved and IQF frozen vegetables and fruit from Egypt for food factories, food service and importers.</p>
+    </div>
+    <div>
+      <h2 data-i18n="footer.pages">Pages</h2>
+      <ul>
+        <li><a href="products.html" data-i18n="nav.products">Products</a></li>
+        <li><a href="about.html" data-i18n="nav.about">About us</a></li>
+        <li><a href="contact.html" data-i18n="nav.contact">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2 data-i18n="nav.contact">Contact</h2>
+      <ul>
+        <li><a href="mailto:info@infinity-import-export.de">info@infinity-import-export.de</a></li>
+        <li data-i18n="footer.langs">We answer in English and German.</li>
+      </ul>
+    </div>
+    <div class="footer-base">
+      <span>© 2026 INFINITY Import &amp; Export GmbH</span>
+      <span><a href="impressum.html">Impressum</a> &nbsp;|&nbsp; <a href="datenschutz.html" data-i18n="footer.privacy">Privacy policy</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/products.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>
