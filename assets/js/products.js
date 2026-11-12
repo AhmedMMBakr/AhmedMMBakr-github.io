@@ -57,6 +57,9 @@ window.PRODUCTS = [
     de: { name: "Eingelegte Zitronen", cut: "Ganz oder geviertelt", medium: "Salzlake", shelf: "24 Monate (Glas, Dose), 12 Monate (Fass)" } },
 
   /* IQF frozen — photos in assets/img/products/ */
+  { id: "iqf-strawberries", range: "iqf", type: "fruit", packs: ["carton"], img: "assets/img/products/iqf-strawberries.jpg",
+    en: { name: "IQF strawberries", cut: "Whole or diced", medium: "Individually quick frozen", shelf: "24 months at −18 °C" },
+    de: { name: "TK Erdbeeren (IQF)", cut: "Ganz oder gewürfelt", medium: "Einzeln schockgefroren", shelf: "24 Monate bei −18 °C" } },
   { id: "iqf-artichokes", range: "iqf", type: "artichokes", packs: ["carton"], img: "assets/img/products/iqf-artichokes.jpg",
     en: { name: "IQF artichokes", cut: "Hearts, quarters or bottoms", medium: "Individually quick frozen", shelf: "24 months at −18 °C" },
     de: { name: "TK Artischocken (IQF)", cut: "Herzen, Viertel oder Böden", medium: "Einzeln schockgefroren", shelf: "24 Monate bei −18 °C" } },
@@ -84,9 +87,6 @@ window.PRODUCTS = [
   { id: "iqf-molokhia", range: "iqf", type: "vegetables", packs: ["carton"], img: "assets/img/products/iqf-molokhia.jpg",
     en: { name: "IQF molokhia", cut: "Whole leaves or minced", medium: "Individually quick frozen", shelf: "24 months at −18 °C" },
     de: { name: "TK Molokhia (Muskraut)", cut: "Ganze Blätter oder gehackt", medium: "Einzeln schockgefroren", shelf: "24 Monate bei −18 °C" } },
-  { id: "iqf-strawberries", range: "iqf", type: "fruit", packs: ["carton"], img: "assets/img/products/iqf-strawberries.jpg",
-    en: { name: "IQF strawberries", cut: "Whole or diced", medium: "Individually quick frozen", shelf: "24 months at −18 °C" },
-    de: { name: "TK Erdbeeren (IQF)", cut: "Ganz oder gewürfelt", medium: "Einzeln schockgefroren", shelf: "24 Monate bei −18 °C" } },
   { id: "iqf-mango", range: "iqf", type: "fruit", packs: ["carton"], img: "assets/img/products/iqf-mango.jpg",
     en: { name: "IQF mango", cut: "Chunks or diced", medium: "Individually quick frozen", shelf: "24 months at −18 °C" },
     de: { name: "TK Mango (IQF)", cut: "Stücke oder gewürfelt", medium: "Einzeln schockgefroren", shelf: "24 Monate bei −18 °C" } },

@@ -49,9 +49,9 @@
       "footer.privacy": "Datenschutz",
       "close": "Schließen",
 
-      "home.title": "Infinity Import Export | Oliven, Eingelegtes, Tiefkühlware und Datteln",
+      "home.title": "Infinity Import Export | Tiefkühlware, Oliven, Eingelegtes und Datteln",
       "home.desc": "Oliven, Eingelegtes, Paprika, tiefgekühltes Gemüse und Obst sowie Datteln, in Gläsern, Dosen, Beuteln, Eimern, Fässern und TK-Kartons für Lebensmittelhersteller, Gastronomie und Importeure.",
-      "home.h1": "Oliven, Eingelegtes, Tiefkühlware und Datteln, in der Packung, mit der Sie arbeiten.",
+      "home.h1": "Tiefkühlware, Oliven, Eingelegtes und Datteln, in der Packung, mit der Sie arbeiten.",
       "home.lead": "Wir beziehen konserviertes und tiefgekühltes Gemüse und Obst sowie Datteln von ausgewählten Erzeugern und Verarbeitern und liefern sie an Lebensmittelhersteller, Großküchen und Importeure.",
       "home.see": "Zum Sortiment",
       "home.ranges.h": "Konserviert, tiefgekühlt oder getrocknet.",
